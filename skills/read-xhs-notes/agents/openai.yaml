@@ -1,4 +1,4 @@
 interface:
   display_name: "Xiaohongshu Note Reader"
-  short_description: "Faithful Xiaohongshu text, image, and video note reading"
-  default_prompt: "Use $read-xhs-notes to read this Xiaohongshu note and produce a source-grounded, lightly compressed reconstruction."
+  short_description: "Quickly read, batch-capture, and archive Xiaohongshu notes"
+  default_prompt: "Use $read-xhs-notes to batch-read my latest Xiaohongshu favorites and extract source-linked tools, skills, workflows, prompts, and useful content."

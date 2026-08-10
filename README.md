@@ -5,13 +5,15 @@
 <p align="center">
   <a href="#安装"><strong>安装</strong></a> ·
   <a href="#第一次使用"><strong>第一次使用</strong></a> ·
+  <a href="#批量入口"><strong>批量入口</strong></a> ·
+  <a href="#内容沉淀"><strong>内容沉淀</strong></a> ·
   <a href="#登录态与隐私"><strong>登录态与隐私</strong></a> ·
   <a href="#能力边界"><strong>能力边界</strong></a>
 </p>
 
-`read-xhs-notes` 是一个面向 Codex、Claude Code 等 Agent Skills 兼容工具的小红书笔记阅读 Skill。它的目标不是把笔记粗暴压缩成几句话，而是先按来源顺序读取正文、图片文字和可访问的视频信息，再给出可核对的轻度整理。
+`read-xhs-notes` 是一个面向 Codex、Claude Code 等 Agent Skills 兼容工具的小红书**快速阅读与批量录入** Skill。它的价值不是“再做一个总结器”，而是把小红书里难以复看的正文、图片文字、视频信息和强信息内容，变成可快速阅读、可回链、可沉淀的笔记记录。
 
-它支持单条笔记、用户明确授权的“我的收藏”批量阅读、图片文字笔记，以及带字幕/可转写语音的视频笔记。评论、点赞和作者互动默认不进入内容分析。
+它支持单条链接、链接列表、用户明确授权的`收藏`与`喜欢`批量入口，以及图文和可访问视频。每篇笔记都会保留原始内容结构，并重点提取工具、Skill、工作流、提示词、命令、链接、指标与限制，便于后续应用到自己的 Agent、AI 工具或知识库。
 
 <p align="center">
   <img src="./assets/readme/workflow.svg" width="100%" alt="从已授权的可见浏览器会话、内容盘点和媒体证据，到保真阅读输出的四步流程">
@@ -23,13 +25,13 @@
 
 ```bash
 # 安装到当前项目，供 Codex 使用
-npx skills add shrekwu/read-xhs-notes --skill read-xhs-notes -a codex
+npx skills add shrekcg/read-xhs-notes --skill read-xhs-notes -a codex
 
 # 全局安装到 Codex，跳过交互确认
-npx skills add shrekwu/read-xhs-notes --skill read-xhs-notes -g -a codex -y
+npx skills add shrekcg/read-xhs-notes --skill read-xhs-notes -g -a codex -y
 
 # 安装到 Claude Code（同一份 Skill）
-npx skills add shrekwu/read-xhs-notes --skill read-xhs-notes -g -a claude-code -y
+npx skills add shrekcg/read-xhs-notes --skill read-xhs-notes -g -a claude-code -y
 ```
 
 也可以克隆仓库后，将 [`skills/read-xhs-notes`](./skills/read-xhs-notes) 放到你的 Agent 所识别的 skills 目录。不同 Agent 的浏览器连接方式不同；本 Skill 需要的是“能读取用户已授权、可见浏览器标签页”的能力，而不是某个特定浏览器品牌。
@@ -44,14 +46,29 @@ npx skills add shrekwu/read-xhs-notes --skill read-xhs-notes -g -a claude-code -
 4. 直接发出请求，例如：
 
 ```text
-用 $read-xhs-notes 读取这条小红书笔记，轻度总结，原文=附上，缓存=即刻清理。
+用 $read-xhs-notes 快速读这条小红书笔记，原文=附上，缓存=即刻清理。
 
-用 $read-xhs-notes 分析我“我的收藏”里最新 5 篇笔记。先按屏幕上的瀑布流顺序列出标题，再逐篇保真整理；模型=继承，推理=中，压缩=轻度。
+用 $read-xhs-notes 批量读取我“我的收藏”里最新 5 篇笔记。先按屏幕上的瀑布流顺序列出标题，再逐篇输出标准阅读记录；模型=继承，推理=中，阅读=保真。
+
+用 $read-xhs-notes 批量读取我“喜欢”里的最新 10 篇笔记，沉淀=本地CSV+Markdown，输出目录=~/Documents/xhs-library。
 
 用 $read-xhs-notes 读取这条视频笔记。优先给出字幕/口播和画面中的操作步骤；如果无法完整转写，请标出已覆盖的时间段和信息缺口。
 ```
 
-`模型`、`推理`、`压缩`、`原文` 与 `缓存` 是相互独立的自然语言配置。若当前 Agent 支持子 Agent 和模型选择，Skill 只把已经脱敏的内容包交给分析阶段；它不会传递浏览器会话或任何凭据。
+`入口`、`数量`、`模型`、`推理`、`阅读`、`原文`、`沉淀`、`输出目录` 与 `缓存` 是相互独立的自然语言配置。若当前 Agent 支持子 Agent 和模型选择，Skill 只把已经脱敏的内容包交给阅读分析阶段；它不会传递浏览器会话或任何凭据。
+
+## 批量入口
+
+批量阅读不等于只读“收藏”。Skill 支持下列入口：
+
+| 入口 | 用途 | 已验证页面状态 |
+| --- | --- | --- |
+| `入口=收藏` | 批量读取用户收藏的笔记 | `tab=fav&subTab=note` |
+| `入口=喜欢` | 批量读取用户点赞的笔记 | `tab=liked&subTab=note` |
+| `入口=链接列表` | 批量读取用户粘贴的一组链接 | 不依赖个人列表 |
+| `入口=可见卡片` | 读取当前已授权页面上渲染的卡片 | 适合用户手动筛选后交给 Agent |
+
+收藏和喜欢是不同的页面入口，必须分别确认当前选中的 `笔记` 子视图。卡片会根据**卡片容器的屏幕位置**排序：先上后下、同一行先左后右；不能用 DOM 数组顺序，也不能用标题文字所在位置代替卡片位置。
 
 ## 登录态与隐私
 
@@ -83,17 +100,50 @@ Agent 只读取可见页面与已授权媒体
 | 多图文字笔记 | 按图片顺序 OCR，保留不可读区域 | `[图 1]`、`[图 2]` |
 | 正文很短、主要信息在图中 | 图片逐张优先，正文只作补充 | `[图 n]` |
 | 视频笔记 | 可访问的字幕/语音 + 关键帧 + 屏幕文字 | `[视频 01:24]` |
-| 批量收藏 | 按真实瀑布流视觉顺序逐篇读取，再做横向归纳 | 每篇独立输出 |
+| 批量收藏 / 喜欢 | 按真实瀑布流视觉顺序逐篇读取，形成可回链记录 | 每篇独立输出 |
 
-默认输出顺序为：标题、作者、类型、这篇具体讲了什么、内容还原、核心观点、可以直接带走的内容、原始文本、信息缺口。
+默认输出是一份标准阅读记录：标题/类型/来源入口、原链接、快速读到的内容、内容还原、强信息清单、可以直接复用的内容、原始文本、信息缺口。
+
+### 强信息清单
+
+这部分是区别于普通总结器的重点。它不会凭空推荐工具，而是把笔记中真正出现过、且适合后续复用的内容按来源标记提取出来：
+
+- 工具与资源：产品、模型、仓库、网站、模板、数据集或文件。
+- Skill / 工作流：命名 Skill、Agent 分工、步骤链路和集成方法。
+- 提示词与命令：尽量保留适用条件与上下文，避免只截取一句口号。
+- 规则 / 指标 / 限制：版本、数字、前置条件、例外和作者提醒。
 
 ## 保真原则
 
-- 先还原来源，后做总结；默认是轻度压缩，不追求“只剩结论”。
+- 先让内容可快速读，后做最小必要的阅读性整理；不追求“只剩结论”。
 - 正文、图片 OCR、视频字幕/ASR、关键帧观察会分开标记，避免把推断写成原文。
-- 名称、数字、步骤、条件、例外和作者结论不能在压缩中丢失。
+- 名称、数字、步骤、条件、例外和作者结论不能在整理中丢失。
 - 视频没有可访问音频、字幕或完整帧时，只报告实际覆盖到的片段，不伪造逐句转写。
 - 批量收藏必须按页面视觉位置排序；不能把 DOM 数组顺序当成瀑布流顺序。
+
+## 内容沉淀
+
+阅读完成后可以选择不保存，也可以把记录沉淀为本地文档或飞书文档。推荐从**本地 CSV + Markdown**开始：Markdown 适合完整回顾，CSV 是可筛选、可导入其他 AI 工具或表格的索引。
+
+```text
+xhs-library/
+├── index.csv                         # 可筛选的总索引
+├── batches/2026-08-10-favorites.md   # 一次批量阅读的总览
+└── notes/<note-id>.md                # 每篇笔记的完整阅读记录
+```
+
+`index.csv` 至少包含：`note_id`、标题、来源入口（收藏/喜欢/链接）、干净原链接、读取时间、笔记类型、强信息项、内容覆盖度和 Markdown 路径。这样你以后可以按“提到过 Codex 的笔记”“有 Prompt 的笔记”“我喜欢的旅行笔记”检索，也能一键回到小红书原笔记。
+
+沉淀选项：
+
+```text
+沉淀=不保存                 # 默认
+沉淀=本地Markdown           # 一份批量回顾文档
+沉淀=本地CSV+Markdown       # 推荐：索引 + 单篇完整记录
+沉淀=飞书文档 飞书目标=<文档或文件夹>
+```
+
+飞书写入是明确的外部操作：只有在你指定了目标文档或文件夹，并在当次明确要求“沉淀到飞书”时才执行。所有沉淀格式都只保存净化后的可回链地址；不会保存小红书页面中的会话参数、分享参数或登录数据。
 
 ## 能力边界
 
@@ -134,10 +184,10 @@ Agent 只读取可见页面与已授权媒体
 
 ## English quick start
 
-`read-xhs-notes` is a source-grounded Xiaohongshu note-reading skill for Codex, Claude Code, and other Agent Skills-compatible tools. It reads an already authorized visible browser session; it never requests, exports, or stores login credentials.
+`read-xhs-notes` is a fast Xiaohongshu reading, batch-capture, and optional archival skill for Codex, Claude Code, and other Agent Skills-compatible tools. It reads an already authorized visible browser session; it never requests, exports, or stores login credentials.
 
 ```bash
-npx skills add shrekwu/read-xhs-notes --skill read-xhs-notes -g -a codex -y
+npx skills add shrekcg/read-xhs-notes --skill read-xhs-notes -g -a codex -y
 ```
 
-Log in manually in your visible browser, open or explicitly share the target note/favorites scope, then ask the agent to use `$read-xhs-notes`. It reconstructs page text, image OCR, and accessible video evidence separately before a light summary. It does not bypass CAPTCHA, access controls, or platform restrictions.
+Log in manually in your visible browser, open or explicitly share the target note, favorites, or likes scope, then ask the agent to use `$read-xhs-notes`. It captures page text, image OCR, accessible video evidence, and source-linked tools, skills, workflows, prompts, commands, and links. It can optionally archive standard records locally or to an explicitly authorized document destination. It does not bypass CAPTCHA, access controls, or platform restrictions.
