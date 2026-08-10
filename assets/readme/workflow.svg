@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="430" viewBox="0 0 1200 430" role="img" aria-labelledby="title desc">
+  <title id="title">The read-xhs-notes workflow</title>
+  <desc id="desc">Four stages: an authorized visible session, source inventory, evidence package, and faithful reading output with uncertainty labels.</desc>
+  <rect width="1200" height="430" rx="26" fill="#F4F5EF"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif">
+    <text x="56" y="64" fill="#101415" font-size="34" font-weight="800">A reading pipeline, not a blind summary</text>
+    <text x="56" y="94" fill="#5C6967" font-size="18">Only source-grounded material moves forward; unavailable media remains visible as a gap.</text>
+  </g>
+  <path d="M276 235H300M532 235H556M788 235H812" stroke="#AAB8B2" stroke-width="3" stroke-linecap="round"/>
+  <path d="M295 229L306 235L295 241M551 229L562 235L551 241M807 229L818 235L807 241" fill="none" stroke="#AAB8B2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif">
+    <g transform="translate(56 148)">
+      <rect width="220" height="176" rx="18" fill="#101415"/>
+      <text x="20" y="38" fill="#EE6C4D" font-size="14" font-weight="800">01</text>
+      <text x="20" y="74" fill="#F4F5EF" font-size="21" font-weight="800">Visible session</text>
+      <text x="20" y="105" fill="#C2D0CB" font-size="15">User logs in</text>
+      <text x="20" y="128" fill="#C2D0CB" font-size="15">and authorizes</text>
+      <text x="20" y="151" fill="#C2D0CB" font-size="15">the target scope.</text>
+    </g>
+    <g transform="translate(312 148)">
+      <rect width="220" height="176" rx="18" fill="#E4EBE5" stroke="#C9D3CD"/>
+      <text x="20" y="38" fill="#EE6C4D" font-size="14" font-weight="800">02</text>
+      <text x="20" y="74" fill="#101415" font-size="22" font-weight="800">Inventory</text>
+      <text x="20" y="105" fill="#45504E" font-size="15">Body, images,</text>
+      <text x="20" y="128" fill="#45504E" font-size="15">video and their</text>
+      <text x="20" y="151" fill="#45504E" font-size="15">rendered order.</text>
+    </g>
+    <g transform="translate(568 148)">
+      <rect width="220" height="176" rx="18" fill="#E4EBE5" stroke="#C9D3CD"/>
+      <text x="20" y="38" fill="#EE6C4D" font-size="14" font-weight="800">03</text>
+      <text x="20" y="74" fill="#101415" font-size="22" font-weight="800">Evidence</text>
+      <text x="20" y="105" fill="#45504E" font-size="15">OCR, subtitles,</text>
+      <text x="20" y="128" fill="#45504E" font-size="15">ASR and frames</text>
+      <text x="20" y="151" fill="#45504E" font-size="15">stay separated.</text>
+    </g>
+    <g transform="translate(824 148)">
+      <rect width="320" height="176" rx="18" fill="#97C1B7"/>
+      <text x="20" y="38" fill="#101415" font-size="14" font-weight="800">04</text>
+      <text x="20" y="74" fill="#101415" font-size="22" font-weight="800">Faithful reading</text>
+      <text x="20" y="105" fill="#20312E" font-size="15">Source order, light</text>
+      <text x="20" y="128" fill="#20312E" font-size="15">compression, and</text>
+      <text x="20" y="151" fill="#20312E" font-size="15">explicit uncertainty.</text>
+    </g>
+  </g>
+  <text x="56" y="377" fill="#5C6967" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">No cookie export · No credential storage · No anti-bot bypass</text>
+</svg>
