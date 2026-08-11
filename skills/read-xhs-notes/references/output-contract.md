@@ -1,33 +1,61 @@
-# Reading record contract
+# 阅读记录约定
 
-## Fidelity rules
+## 保真规则
 
-- Put source reconstruction before any reading-oriented restructuring.
-- Keep original order and retain names, numbers, steps, conditions, exceptions, and conclusions.
-- Distinguish directly visible text from OCR, ASR, and model interpretation.
-- Add source markers only where they improve checking; do not clutter short text notes.
+- 内容还原优先于整理；保持原始顺序，以及名称、数字、步骤、条件、例外和结论。
+- 区分页面可见文本、OCR、ASR 与模型解释，不得把后者写成原文。
+- 只在有助于核对时添加来源标记；短文本笔记不要被标记淹没。
+- 对无法读取、识别存疑、内容冲突或仅部分覆盖的内容如实反馈，不得臆测补齐。
 
-## Suggested wording
+## 三档整理深度
 
-Use “笔记明确说……” for page-grounded claims, “图片中可读到……” for OCR, “视频在 01:24 显示……” for key-frame observations, and “当前无法确认……” for gaps. Mark a high-information item as “笔记提到” rather than treating it as a verified recommendation.
+深度是阅读策略，不是机械的字数比例。所有深度都必须保留可核对的内容还原，并以笔记自己的主题决定重点。
 
-## High-information inventory
+| 深度 | 输出重点 | 不应做的事 |
+| --- | --- | --- |
+| 轻度 | 最小限度分段、去重与衔接，让读者更快顺着原文读完。 | 不用宽泛概念替换具体表达，不省略关键例子、条件或例外。 |
+| 中度 | 讲清主题、论证/步骤和结论；把该领域真正影响理解的细节显性化。 | 不套用“工具清单”等固定栏目，也不把合理推断当原文。 |
+| 高度 | 便于初筛的分层概览，突出主要观点、做法、条件、风险和值得回看的点。 | 不只给一句结论；不能牺牲可回看的内容还原。 |
 
-Extract literal items that help a reader reuse the note in another Agent or AI tool:
+根据内容类型选择注意项：AI 笔记关注名称、版本、操作和限制；旅行笔记关注地点、路线、时间、费用、预约和避坑；商品或经验笔记关注对象、方法、前提、结果和例外。它们是内部阅读提示，不是固定输出标题。
 
-- 工具与资源 — product, model, repository, website, template, dataset, or file.
-- Skill / 工作流 — named skill, agent role, sequence, integration, or operating method.
-- 提示词与命令 — preserve enough surrounding condition to make a prompt or command usable.
-- 规则 / 指标 / 限制 — numbers, version requirements, prerequisites, exceptions, and caveats.
+## 建议措辞
 
-For every item, preserve the literal name and a `[正文]`, `[图 n]`, or `[视频 mm:ss]` marker. Include a link only if it is visible in the source; do not manufacture a URL from a product name.
+页面内容用“笔记明确说……”，图片 OCR 用“图片中可读到……”，关键帧用“视频在 01:24 显示……”，无法确认用“当前无法确认……”。笔记提到的产品、链接、工作流或提示词，只能表述为“笔记提到”，不能自动视为推荐或已验证方案。
 
-## Raw text presentation
+## 识别说明
 
-Label the blocks separately:
+只有出现问题时添加“识别说明”，格式为：
 
-1. 原始正文 — page text captured from the note.
-2. 图片文字稿 — OCR-derived text, grouped by image index.
-3. 视频文字稿 — accessible subtitle or ASR text, grouped by timestamp.
+```text
+状态：部分识别 / 存疑 / 无法读取
+影响范围：[图 4] 的两行小字 / 视频 00:42–01:18 的口播
+原因：画面模糊、字幕不可访问、音轨不可用、页面未加载完成或多处证据冲突
+处理：保留已读内容；未确认部分不纳入结论
+```
 
-If combined source text is too long for chat, create one Markdown artifact only when requested or configured. Never silently truncate it.
+不要用笼统的“可能有误”代替可定位的说明。
+
+## 读取状态与覆盖度
+
+先判断是否真正取得笔记主体，再谈覆盖度。页面标题、推荐卡片、话题标签和页面外围文字不能作为主体内容证据。
+
+| 读取状态 | 覆盖度 | 内容概览 | 输出动作 |
+| --- | --- | --- | --- |
+| `已读取` | `完整` | 填写 | 正常输出阅读记录。 |
+| `部分读取` | `部分` | 填写 | 正常输出已确认内容和识别说明。 |
+| `登录失效` | `不适用` | 留空 | 提示用户在当前 Agent 可访问的浏览器中手动登录后重试。 |
+| `访问受限` | `不适用` | 留空 | 提示用户完成验证码、设备验证或其他人工步骤；“安全限制”“账号异常”和平台错误码也归入此状态，不得绕过。 |
+| `页面异常` | `不适用` | 留空 | 说明异常现象，建议刷新或稍后重试。 |
+
+登录失效的判定条件：当前笔记 URL 出现登录、扫码、验证码或手机号登录界面，同时没有从实际笔记内容区域取得正文或媒体。不要因为仍能看见标题而标成“部分读取”。
+
+## 原始文本展示
+
+分别标注：
+
+1. 原始正文：从笔记页面采集的正文。
+2. 图片文字稿：OCR 结果，按图片序号分组。
+3. 视频文字稿：可访问的字幕或 ASR，按时间点分组。
+
+聊天窗口容纳不下时，只有在用户要求或配置为 `原文=单独文件` 时才生成 Markdown 文件；不得静默截断。

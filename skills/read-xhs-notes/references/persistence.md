@@ -1,18 +1,35 @@
-# Persistence contract
+# 沉淀约定
 
-## Select the smallest useful destination
+## 选择最小可用目的地
 
-| Request | Destination | Recommended use |
+| 请求 | 目的地 | 推荐用途 |
 | --- | --- | --- |
-| `沉淀=本地Markdown` | One batch Markdown document | A readable review after a small batch |
-| `沉淀=本地CSV+Markdown` | One `index.csv` plus one Markdown record per note | A growing personal library; recommended default for repeated batches |
-| `沉淀=飞书文档` | A user-specified Feishu document or folder | Shared review or an existing Feishu knowledge workflow |
+| `沉淀=本地Markdown` | 一份批量 Markdown 文档 | 小批量阅读后的集中回顾 |
+| `沉淀=本地CSV+Markdown` | 一个 `index.csv` 加每篇 Markdown 记录 | 持续积累的个人笔记库，推荐用于重复批量任务 |
+| `沉淀=飞书文档` | 一份为本批次新建的飞书文档 | 在飞书中快速浏览一批笔记的索引 |
 
-Do not write anything when `沉淀=不保存`. For a Feishu destination, require an explicit document or folder target and explicit user authorization at write time. Use the host's document connector when available; otherwise report that the destination is unsupported rather than simulating a save.
+`沉淀=不保存` 时不得写入任何文件。写飞书必须在当次有明确的 `沉淀=飞书文档` 请求和用户授权。运行环境还必须有已授权的用户身份、创建/写入飞书文档权限，以及对目标文件夹的编辑权限；缺少时说明问题，不能假装保存成功。
 
-## Local layout
+`沉淀=飞书文档` 的目的地规则：每次任务都新建一份以“`小红书笔记阅读 · <日期>`”命名的批次文档；提供文件夹 URL 时在其中新建，未提供 `飞书目标` 时写到个人空间。首个版本不追加或覆盖已有飞书文档，避免批次混写。
 
-Use a user-selected output directory. For `本地CSV+Markdown`, use this stable layout:
+## 飞书批量索引表
+
+批量写入飞书文档时，创建一份只含原生表格的新文档，每篇笔记一行。不要把长正文塞进表格单元格，也不要在表后追加单篇全文；需要全文时使用本地 Markdown 沉淀或在对话中请求 `原文=附上`。表头固定为：
+
+```text
+序号, 标题, 来源入口, 类型, 整理深度, 读取状态, 覆盖度, 内容概览, 原始链接
+```
+
+- `读取状态`：`已读取`、`部分读取`、`登录失效`、`访问受限` 或 `页面异常`。它是后续筛选需要重试的行的主字段。
+- `内容概览`：一两句、贴合该篇笔记主题的阅读概览；读取状态不是“已读取/部分读取”时留空。
+- `原始链接`：用户提供的短链接或原始笔记链接，经去除查询参数后以纯文本保存；不要封装成“打开原笔记”等富链接。
+- `覆盖度`：主体已读取时标记 `完整` 或 `部分`；登录失效、访问受限和页面异常标记 `不适用`。
+
+使用飞书文档原生 `<table>`，不要求飞书多维表格。若用户随后要筛选、标签、视图或自动化，再导出/同步 CSV 到多维表格；未经用户要求不要擅自创建 Base。
+
+## 本地布局
+
+使用用户指定的输出目录。`本地CSV+Markdown` 采用稳定结构：
 
 ```text
 xhs-library/
@@ -23,64 +40,60 @@ xhs-library/
     └── 6a717ae00000000008013570.md
 ```
 
-Do not place media downloads, browser data, or credentials in the archive. The archive contains only the standard reading record and user-approved text artifacts.
+档案只包含标准阅读记录和用户同意保存的文本，不保存媒体下载、浏览器数据或任何凭据。
 
-## Index fields
+## 索引字段
 
-Keep the index machine-readable and source-linked:
+索引应可检索、可回链，但不把某类信息设为必填：
 
 ```text
-note_id,title,entry_point,source_url,captured_at,display_type,high_information,coverage,record_path
+note_id,title,entry_point,source_url,captured_at,display_type,reading_depth,read_status,coverage,keywords,record_path
 ```
 
-- `note_id`: stable note identifier when available.
-- `title`: literal note title.
-- `entry_point`: `link`, `link_list`, `favorites`, `likes`, or `visible_cards`.
-- `source_url`: sanitized re-openable note URL; never an href containing session parameters.
-- `captured_at`: ISO 8601 timestamp of the read.
-- `display_type`: human-readable media label.
-- `high_information`: short semicolon-separated literal item names.
-- `coverage`: `complete`, `partial`, or `unavailable`.
-- `record_path`: relative Markdown record path.
+- `note_id`：可用时的稳定笔记标识。
+- `title`：原始标题。
+- `entry_point`：`link`、`link_list`、`favorites`、`likes` 或 `visible_cards`。
+- `source_url`：净化后可重新打开的地址，绝不保存带会话参数的 href。
+- `captured_at`：读取时的 ISO 8601 时间。
+- `display_type`：人可读的媒体形态。
+- `reading_depth`：`light`、`medium` 或 `high`。
+- `read_status`：`success`、`partial_success`、`login_required`、`access_restricted` 或 `page_error`；用于筛选重试项。
+- `coverage`：主体已读取时为 `complete` 或 `partial`；读取状态不是成功时为 `not_applicable`。
+- `keywords`：可选的、贴合笔记主题的检索词；无可靠词时留空。
+- `record_path`：相对 Markdown 路径。
 
-Deduplicate by `note_id` when available, otherwise by sanitized source URL. Update an existing index row rather than writing a duplicate unless the user asks to retain reading history.
+优先按 `note_id` 去重；无 ID 时按净化链接去重。除非用户要求保留历史，否则更新已有索引行。
 
-## Markdown record
-
-Use this shape for each note:
+## 单篇 Markdown 记录
 
 ```markdown
-# <literal title>
+# <原始标题>
 
 - 来源入口：<收藏 | 喜欢 | 链接列表 | 单条链接>
-- 原链接：<sanitized re-openable URL>
+- 原链接：<净化后可重新打开的 URL>
 - 读取时间：<ISO 8601>
-- 类型：<display type>
+- 类型：<笔记形态>
+- 整理深度：<轻度 | 中度 | 高度>
+- 读取状态：<已读取 | 部分读取 | 登录失效 | 访问受限 | 页面异常>
+- 覆盖度：<完整 | 部分 | 不适用>
 
-## 快速读到的内容
+## 内容
 
-<two or three source-grounded sentences>
+<按所选深度整理，贴合该篇笔记主题>
 
 ## 内容还原
 
-<source-order body with evidence markers>
-
-## 强信息清单
-
-### 工具与资源
-### Skill / 工作流
-### 提示词与命令
-### 规则 / 指标 / 限制
+<按来源顺序，保留必要证据标记>
 
 ## 原始文本
 
-<page body, OCR, and ASR labeled separately>
+<正文、OCR 与 ASR 分别标注；遵循原文设置>
 
-## 信息缺口
+## 识别说明
 
-<only when needed>
+<仅在有问题时写入>
 ```
 
-## Link sanitation
+## 链接净化
 
-Before writing a URL, remove query and fragment components, especially `xsec_token`, `xsec_source`, sharing IDs, timestamps, and tracking parameters. When a stable note ID is known, prefer `https://www.xiaohongshu.com/explore/<note-id>`. Preserve the user-provided short link only when no stable note ID is available.
+写入前去掉查询参数和片段，尤其是 `xsec_token`、`xsec_source`、分享 ID、时间戳和追踪参数。已知稳定笔记 ID 时，优先 `https://www.xiaohongshu.com/explore/<note-id>`；没有稳定 ID 才保留用户提供的短链接。

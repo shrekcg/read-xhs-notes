@@ -1,27 +1,61 @@
-# Session and privacy
+# 会话与隐私
 
-## User action
+## 用户操作
 
-1. Open Xiaohongshu in a browser the agent can visibly control.
-2. Log in manually with the user's normal method.
-3. Open or explicitly share the target note, favorites page, or a browser tab with the agent.
-4. Complete any CAPTCHA, device verification, or login confirmation manually.
+1. 在 Agent 能够读取的可见浏览器中打开小红书。
+2. 用自己的正常方式手动登录。
+3. 打开或明确分享目标笔记、收藏页，或可交给 Agent 的浏览器标签页。
+4. 自行完成验证码、设备验证或任何登录确认。
 
-The user should never paste a cookie, token, password, QR-login value, browser profile, or session export into chat.
+用户不应在对话中粘贴 Cookie、Token、密码、二维码登录值、浏览器 Profile 或会话导出内容。
 
-## Agent action
+## 会话为什么会失效
 
-- Read visible page content only after the user has authorized the page or account scope.
-- Do not access browser storage, cookie jars, saved passwords, extension data, or profile directories.
-- Keep browser work in the background unless the user asks to watch it.
-- Restore or close temporary navigation tabs according to the host browser's normal cleanup rules.
+不要把所有失败都归因于 Cookie 到期。至少区分四类原因：
 
-## Favorites scope
+1. **浏览器实例未继承**：宿主为新任务或新进程创建了隔离资料目录，原浏览器的登录态没有被带过来。
+2. **平台撤销会话**：小红书服务端主动要求重新登录、设备验证或安全检查；具体有效期由平台决定。
+3. **网页会话冲突**：同一账号在另一个网页端会话重新登录后，原网页会话可能被退出。这是社区项目的实测经验，不应当作官方保证。
+4. **分享链接参数失效**：短链接或 `xsec_token` 等访问参数过期，但浏览器账号本身仍可能处于登录状态。
 
-`我的收藏` is private account content. Require the user to have authorized their own signed-in favorites page. Do not infer that permission from a public note link, public profile, or another person's shared page.
+诊断时只根据可见页面与可访问内容判断，不检查 Cookie、Local Storage 或 Profile 文件。
 
-## Failure handling
+## 持久会话建议
 
-- If login is required, ask the user to complete it in the visible browser; do not request credentials.
-- If a CAPTCHA or device check appears, pause and ask the user to complete it.
-- If the page has no usable browser session, provide the reading template and explain that only publicly visible content may be available.
+长期使用优先采用一个本机专用、可见、持久化的浏览器资料目录：
+
+1. 由用户首次正常登录并完成平台要求的验证。
+2. 后续任务始终连接同一浏览器实例或同一专用资料目录，不为每次任务新建临时资料目录。
+3. 浏览器自行保存会话；Agent 只读取可见页面，不读取、打印、复制或导出 Profile、Cookie、Token。
+4. 每批任务先做一次可见页面健康检查；确认能取得笔记主体后再批量读取。
+5. 登录失效时走人工交接；访问受限时停止，不连续重试。
+
+专用资料目录应只用于小红书阅读，不复用用户的主浏览器资料目录，也不允许 Agent 接触保存的密码或其他站点数据。该方案只能减少因临时浏览器重建造成的重复登录，不能阻止平台撤销会话。
+
+## Agent 操作
+
+- 仅在用户已授权页面或账户范围后读取可见页面内容。
+- 不访问浏览器存储、Cookie、保存的密码、扩展数据或 Profile 目录。
+- 用户未要求观看时，浏览器操作保持后台进行。
+- 临时跳转页遵循宿主浏览器的清理规则恢复或关闭。
+
+## 收藏范围
+
+`我的收藏` 是私有账户内容。只有用户授权其本人已登录的收藏页面才能读取；公开笔记链接、公开主页或他人分享页面不构成这项授权。
+
+## 登录失效检测与恢复
+
+出现下列组合时判定为 `登录失效`：当前页面是目标笔记 URL；可见页面出现登录、扫码、手机号验证码或设备验证界面；同时没有从实际笔记内容区域取得正文或媒体。标题、推荐卡片、话题标签和页面外围文字均不能作为“已读取”依据。
+
+判定后立即停止内容分析，写入 `读取状态=登录失效`、`覆盖度=不适用`、`内容概览=留空`，并执行交接式恢复：
+
+1. Agent 主动打开目标笔记的登录页，将浏览器设为可见，并以 `handoff` 状态保留该页；不要创建多个重复窗口或关闭该页。
+2. Agent 告诉用户当前显示的是登录页，以及可用的扫码、手机号验证码或设备验证方式；若浏览器面板未展开，明确提示用户展开工作台中的浏览器面板。
+3. 用户仅在该页面自行完成登录，不必回到原链接，也不向 Agent 提供 Cookie、Token、验证码、缓存 key 或浏览器 Profile。
+4. 用户回复“已登录”后，Agent 从保留的同一 URL 重试一次；成功则继续读取，失败则输出新的读取状态和恢复条件。
+
+## 其他失败处理
+
+- 需要验证码或设备检查，或页面显示“安全限制”“账号异常”“请稍后重试”或平台错误码：标记 `访问受限`，暂停且不连续重试。让用户在本人设备或 App 中完成平台要求的安全检查、等待限制解除或按平台提示处理；用户确认能正常打开笔记后，才重试一次。绝不绕过。
+- 页面有有效会话但主体内容加载异常：标记 `页面异常`，建议刷新或稍后重试。
+- 只有部分图片、字幕、音频或关键帧不可读，而主体已取得：标记 `部分读取` 与 `覆盖度=部分`，并在识别说明中定位缺口。

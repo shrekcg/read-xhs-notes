@@ -1,71 +1,80 @@
 ---
 name: read-xhs-notes
-description: Quickly read, batch-capture, and optionally archive Xiaohongshu notes from one link, a user-authorized favorites list, a user-authorized likes list, or an explicit link list. Use when a user wants the actual content of Xiaohongshu text, image, or accessible video notes; wants to batch-read notes; wants tools, skills, workflows, prompts, links, commands, and other high-information items extracted; or wants source-linked note records saved locally or to an explicitly authorized knowledge destination.
+description: 从单条链接、链接列表，或用户明确授权的“小红书收藏/喜欢”页面快速阅读并保真还原笔记。适用于读取纯文字、图文、图片文字或可访问视频笔记；批量读取笔记；按轻度、中度或高度整理内容；或将带原链接的阅读记录沉淀到本地或用户明确授权的知识库。
 ---
 
-# Xiaohongshu Note Reader
+# 小红书笔记快速阅读
 
-Treat this skill as a fast reading and content-capture pipeline. Make a note readable before making it shorter. Preserve source order and strong information so the user can reuse a note in an Agent, AI tool, or later review.
+先让笔记变得可读，再按用户选择的深度整理。目标是帮助用户快速理解笔记的实际内容、保留可回看的原始依据，而不是把所有笔记硬套成某种固定信息清单。
 
-## Authorization and privacy boundary
+## 授权与隐私边界
 
-- Use only a user-authorized, visible browser session. Ask the user to sign in manually when necessary.
-- Never ask for, inspect, export, log, or store cookies, tokens, passwords, QR-login payloads, local storage, browser profiles, or other credentials.
-- Do not bypass a CAPTCHA, login challenge, access control, rate limit, or platform restriction. Let the user complete any required interactive step.
-- Treat `收藏` and `点赞` as separate private entry points. Use either only after the user authorizes that specific account scope.
-- Do not transmit note contents or browser data to an external model, OCR/ASR service, document service, or knowledge base unless the user explicitly authorizes that destination.
+- 仅使用用户明确授权的、可见的浏览器会话；需要登录时让用户自行完成。
+- 不索取、查看、导出、记录或保存 Cookie、Token、密码、二维码登录数据、本地存储、浏览器 Profile 或其他凭据。
+- 不绕过验证码、登录挑战、访问控制、限流或平台限制；遇到时暂停并让用户手动处理。
+- 宿主提供持久浏览器能力时，优先复用同一个本机专用、可见的浏览器资料目录；浏览器自行保管会话，Agent 不读取或导出其中数据。不得承诺会话永久有效。
+- `收藏` 与 `喜欢` 是不同的私有入口，只有在用户明确授权对应范围后才可读取。
+- 当前 Agent 及其模型按照宿主服务的隐私规则处理用户交给它的笔记内容。未经用户对具体目的地的明确授权，不得将内容额外发送到当前 Agent 运行环境之外的模型、OCR/ASR、文档服务或知识库。
 
-## Batch entry points
+## 批量入口
 
-Accept these request modes:
+支持下列请求方式：
 
-- `入口=链接` — one note link.
-- `入口=链接列表` — user-provided links.
-- `入口=收藏` — newest or selected notes in the user's authorized favorites view.
-- `入口=喜欢` — newest or selected notes in the user's authorized likes view.
-- `入口=可见卡片` — cards currently rendered on an authorized page.
+- `入口=链接`：单篇笔记。
+- `入口=链接列表`：用户提供的一组链接。
+- `入口=收藏`：用户已授权收藏视图中的最新或指定笔记。
+- `入口=喜欢`：用户已授权“点赞”视图中的最新或指定笔记。
+- `入口=可见卡片`：当前已授权页面中已经渲染的卡片。
 
-For `收藏` and `喜欢`, first confirm the active page state (`tab=fav` or `tab=liked`) and the `笔记` sub-view. Capture the bounding rectangle of each **card container**, not its title link. Sort cards by container position—top-to-bottom, then left-to-right within the same visual band—and deduplicate by note ID. Show the selected titles before opening notes when the batch is large.
+读取 `收藏` 或 `喜欢` 时，先确认页面状态分别为 `tab=fav` 或 `tab=liked`，且处于“笔记”子视图。用每张**卡片容器**的屏幕位置排序：先上后下，同一视觉行先左后右；不得使用标题链接的位置或 DOM 数组顺序。按笔记 ID 去重。批量较大时，先列出选中的标题供用户核对。
 
-## Workflow
+## 阅读流程
 
-1. Identify the entry point, requested count, and whether the user wants an archive.
-2. Capture note title, author, clean source link, page body, media type, visible media order, and media availability. Exclude comments, likes, and unrelated metadata unless asked.
-3. Read every carrier:
-   - Preserve the full page body and paragraph order.
-   - OCR every text-bearing image in order. Prefer original page assets; use screenshots only when necessary.
-   - For video, read accessible subtitles or speech when available, then sample key frames for on-screen text and meaningful visual changes. Report partial coverage when audio, captions, or frames are unavailable.
-4. Build a normalized evidence package. Keep page body, OCR, subtitle/ASR, key-frame observations, and uncertainty separate.
-5. Extract high-information items without promoting or validating them: tools, skills, repositories, websites, workflows, prompts, commands, configurations, templates, metrics, constraints, and referenced links. Keep every item's source marker.
-6. If the environment supports a child-agent runner, dispatch only the normalized package for reading analysis. Inherit the current model and reasoning effort by default; honor a user-specified model or reasoning level only when the runner supports it. Never pass browser state or credentials.
-7. Render a standard reading record. Preserve names, numbers, steps, conditions, exceptions, causal links, and the author's conclusion. Use light restructuring only to improve scanability.
-8. If requested, archive the records using the persistence contract. Sanitize saved links before writing them and require an explicit destination for any external document service.
-9. Verify selected-card coverage, source markers, high-information items, persisted link safety, and unsupported inferences. Clean temporary media and intermediates in a `finally` path.
+1. 明确入口、数量、整理深度、是否附原文，以及是否需要沉淀。用户粘贴小红书原生分享文案时，先从文本中提取唯一的小红书 URL，再忽略标题、引导语和其他噪音。
+2. 采集标题、作者、干净原链接、正文、媒体类型、媒体顺序和媒体可用性。除非用户要求，不读取评论、点赞或无关元数据。
+3. 按内容载体读取：保留正文段落顺序；逐张识别包含文字的图片；视频优先读取可访问字幕或口播，再按需抽取关键画面与屏幕文字。
+4. 在读取前判断会话状态：只有在实际笔记内容区域取得正文或媒体，才进入内容分析。先区分分享链接参数失效、浏览器会话未继承和小红书服务端撤销登录；分享链接中的访问参数不等于账号登录态。若当前笔记 URL 显示登录/扫码/验证码表单，且主体内容为空，则标记 `登录失效`，不把标题、推荐卡片或话题标签当作笔记内容。主动把该登录页展示并以 `handoff` 状态保留在当前工作台的可见浏览器面板，暂停任务；说明页面标题与可用登录方式，引导用户只完成扫码、手机号验证码或设备验证，然后回复“已登录”。不得要求用户复制链接、寻找页面、提供验证码或任何会话数据。收到“已登录”后，从同一 URL 重试一次。若页面显示“安全限制”“账号异常”“请稍后重试”或平台错误码，则标记 `访问受限`，停止连续重试，让用户在本人设备或 App 中按平台提示处理后再明确要求重试；不得绕过。
+5. 建立证据包，分开保存正文、图片 OCR、字幕/ASR、关键帧观察和不确定项。
+6. 依据所选整理深度生成阅读记录。名称、数字、步骤、条件、例外、因果关系和作者结论不得被遗漏或改写成确定事实。
+7. 若环境支持子 Agent，可只把已脱敏的证据包交给阅读分析。默认继承当前模型和推理强度；仅在运行器支持时接受用户指定的 `模型`、`推理`。不得传递浏览器状态或凭据。
+8. 对无法读取、识别存疑、内容互相冲突或覆盖不完整之处，明确说明影响范围和原因，绝不猜测补全。`覆盖度`只能为已读取笔记标记 `完整` 或 `部分`；登录失效、访问受限和页面异常一律标记 `不适用`，并使内容概览留空。
+9. 用户要求时，按沉淀约定保存阅读记录；写入前净化链接。`沉淀=飞书文档` 时，为本批次新建一份只含原生索引表的飞书文档；未给出目标时写到个人空间，给出文件夹 URL 时在该文件夹下新建。飞书写入仍须在当次明确请求，并要求运行环境已完成用户身份授权且具备创建/写入文档权限。
+10. 完成后核对卡片覆盖、媒体顺序、证据标记、读取状态、识别问题、链接安全与无依据推断，并在 `finally` 路径清理临时媒体和中间文件。
 
-## Request configuration
+## 整理深度
 
-Accept natural-language overrides such as:
+深度控制的是阅读注意力、结构化程度和解释范围，不只是把内容压缩得更短。默认 `中度`；用户没有指定时，可根据“快速扫一遍”“认真读”“批量初筛”等表述作出保守选择，并说明采用的深度。
 
-`入口=<链接|链接列表|收藏|喜欢|可见卡片> 数量=<N> 模型=<available-model> 推理=<继承|低|中|高> 阅读=<保真|轻度整理> 原文=<自动|附上|单独文件|不输出> 沉淀=<不保存|本地Markdown|本地CSV+Markdown|飞书文档> 输出目录=<path> 飞书目标=<doc-or-folder> 缓存=<即刻清理|24小时|3天>`
+| 深度 | 适用场景 | 整理方式 |
+| --- | --- | --- |
+| `轻度` | 想尽量接近原文、稍快读完 | 只做最小分段和衔接；保留原有顺序、细节与表达重心。 |
+| `中度` | 日常单篇阅读或批量回顾 | 在不改变原意的前提下归并主题、步骤和结论；根据笔记领域显性呈现关键细节。 |
+| `高度` | 批量初筛、需要快速判断是否值得回看 | 用清晰的层次组织主要观点、步骤、条件和风险；仍保留可对照的内容还原与来源标记。 |
 
-Defaults: `阅读=保真`, `原文=自动`, `沉淀=不保存`, and `缓存=即刻清理`. Keep model, reasoning, reading depth, archive target, and temporary retention independent.
+按笔记领域决定应注意的信息，而非输出固定栏目。例如 AI/工具笔记应特别留意工具名、版本、提示词、命令、工作流和限制；旅行笔记应留意地点、路线、时间、费用、预约、避坑与适用条件；商品或经验笔记则留意对象、方法、前提、结果与例外。只提取来源实际出现、且对理解该篇笔记有用的内容；不把这些项目单独设为强制输出。
 
-## Standard reading record
+## 请求配置
 
-Output every note in this order:
+接受自然语言或以下覆盖项：
 
-1. 标题 / 类型 / 来源入口
-2. 原链接 — use a cleaned, re-openable note URL; never include session query parameters.
-3. 快速读到的内容 — two or three source-grounded sentences.
-4. 内容还原 — the main body, following source order. Use `[正文]`, `[图 3]`, or `[视频 01:24]` when they aid checking.
-5. 强信息清单 — grouped as `工具与资源`, `Skill/工作流`, `提示词与命令`, `规则/指标/限制`, with source markers and links only when actually present.
-6. 可以直接复用的内容 — concrete prompts, commands, steps, or templates; do not invent a recommendation.
-7. 原始文本 — label page body, image OCR, and video subtitle/ASR separately.
-8. 信息缺口 — unreadable, unavailable, or partially covered content only.
+`入口=<链接|链接列表|收藏|喜欢|可见卡片> 数量=<N> 模型=<可用模型> 推理=<继承|低|中|高> 整理=<轻度|中度|高度> 原文=<自动|附上|单独文件|不输出> 沉淀=<不保存|本地Markdown|本地CSV+Markdown|飞书文档> 输出目录=<path> 飞书目标=<文件夹> 缓存=<即刻清理|24小时|3天>`
 
-For batches, finish the full record for every note before adding an optional cross-note index. Do not let a batch synthesis replace the individual source records.
+默认：入口根据用户输入识别（单链接、链接列表、收藏、喜欢和可见卡片）；收藏、喜欢和可见卡片必须由用户明确指定，绝不自动进入私有列表。其余默认值为：`模型=继承当前对话模型`、`推理=继承当前对话推理强度`、`整理=中度`、`原文=自动`、`沉淀=不保存`、`缓存=即刻清理`。`原文=自动` 时，篇幅可承载则附上正文、OCR 与视频文字稿；过长时说明范围，并只在用户要求时另存。模型、推理、整理深度、沉淀目标和临时保留策略彼此独立。
 
-## Normalized evidence package
+## 标准阅读记录
+
+每篇笔记按下列顺序输出：
+
+1. 标题 / 类型 / 来源入口 / 整理深度 / 读取状态
+2. 原链接：使用可重新打开、且不含会话参数的地址。
+3. 内容：按所选深度讲清笔记在说什么、如何展开、作者的主要观点或做法；只写与该篇笔记相关的重点。
+4. 内容还原：按原始顺序还原主体内容；必要时使用 `[正文]`、`[图 3]`、`[视频 01:24]` 方便核对。
+5. 原始文本：将原始正文、图片文字稿、视频文字稿分开标注；遵循 `原文` 选项。
+6. 识别说明：仅在已读取内容存在问题时给出状态（`部分识别`、`存疑` 或 `无法读取`）、受影响内容、证据位置与原因。读取状态为 `登录失效`、`访问受限` 或 `页面异常` 时，内容和内容还原留空，只输出恢复条件。
+
+批量任务应先完成每篇独立记录，再按需附上跨笔记索引；跨笔记总结不得替代单篇内容。不得强制输出“强信息清单”或“可直接复用的内容”栏目。
+
+## 规范化证据包
 
 ```yaml
 note:
@@ -89,13 +98,8 @@ raw_content:
       - timestamp: 00:00
         text: <on-screen text>
         visual_notes: <observable action or diagram>
-high_information:
-  - kind: <tool|skill|workflow|prompt|command|link|metric|constraint|template>
-    name: <literal source name>
-    detail: <source-grounded description>
-    source_marker: <正文|图 2|视频 01:24>
-    url: <sanitized URL when present>
 coverage:
+  read_status: <success|partial_success|login_required|access_restricted|page_error>
   body_complete: true
   images_expected: 0
   images_processed: 0
@@ -103,13 +107,14 @@ coverage:
   uncertain_segments: []
 ```
 
-## Resources
+## 资源
 
-- Read [references/session-and-privacy.md](references/session-and-privacy.md) before operating a signed-in session or explaining authorization.
-- Read [references/media-routing.md](references/media-routing.md) when choosing OCR, image, video, or cleanup behavior.
-- Read [references/output-contract.md](references/output-contract.md) when rendering a reading record or strong-information inventory.
-- Read [references/persistence.md](references/persistence.md) when saving local files or an explicitly authorized document destination.
-- Read [references/quality-checklist.md](references/quality-checklist.md) before finalizing a batch or media-heavy note.
-- Use [scripts/order-cards.mjs](scripts/order-cards.mjs) only to sort already-captured card-container records.
-- Use [scripts/sanitize-note-url.mjs](scripts/sanitize-note-url.mjs) before saving any note URL.
-- Use [scripts/cleanup-run.mjs](scripts/cleanup-run.mjs) only with an explicit run directory and its explicit temporary-root directory.
+- 操作已登录会话或说明授权前，阅读 [references/session-and-privacy.md](references/session-and-privacy.md)。
+- 设计本机 helper、MCP、批量采集或持久会话方案前，阅读 [references/automation-and-compliance.md](references/automation-and-compliance.md)。
+- 选择 OCR、图片、视频或清理策略时，阅读 [references/media-routing.md](references/media-routing.md)。
+- 输出阅读记录、选择整理深度或反馈识别问题时，阅读 [references/output-contract.md](references/output-contract.md)。
+- 保存本地文件或用户明确授权的文档目的地时，阅读 [references/persistence.md](references/persistence.md)。
+- 完成批量或媒体较多的笔记前，阅读 [references/quality-checklist.md](references/quality-checklist.md)。
+- 仅用 [scripts/order-cards.mjs](scripts/order-cards.mjs) 对已采集的卡片容器记录排序。
+- 保存任意笔记链接前，使用 [scripts/sanitize-note-url.mjs](scripts/sanitize-note-url.mjs)。
+- 仅在提供了明确运行目录和临时根目录时使用 [scripts/cleanup-run.mjs](scripts/cleanup-run.mjs)。

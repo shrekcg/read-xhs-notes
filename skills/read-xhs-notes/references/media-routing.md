@@ -1,21 +1,21 @@
-# Media routing
+# 媒体读取路由
 
-## Text
+## 正文
 
-Capture the full visible page body and preserve paragraph and heading order. Ignore comments by default.
+读取完整可见正文，保留段落与标题顺序。默认忽略评论区。
 
-## Images
+## 图片
 
-Prefer original page image assets when the browser exposes them. OCR every text-bearing image in order and record image index, confidence, and unreadable regions. Treat cover-only imagery as non-evidence for claims. Use screenshots only as a fallback.
+浏览器能够提供原始图片资源时优先使用原图。按顺序识别每张含文字图片，记录图片序号、识别可信度和不可读区域。只有封面视觉而没有可读内容的图片，不能作为事实依据。仅在无法取得原图时使用截图。
 
-## Video
+## 视频
 
-Capture accessible subtitles and speech before sampling key frames for on-screen text and meaningful visual changes. Increase frame density for silent screen recordings. Record timestamps.
+先读取可访问的字幕和口播，再按画面文字与有意义的视觉变化抽取关键帧。无口播的屏幕录制可以提高关键帧密度。所有视频证据都记录时间点。
 
-Do not claim full transcription when the browser exposes only a stream, audio is unavailable, captions are absent, or the runtime has no speech-to-text capability. In that case, report partial coverage with the exact evidence available.
+浏览器只提供流媒体、音频不可用、没有字幕，或运行环境没有语音转写能力时，不得声称已经完整转写。此时应标记部分覆盖，并列出实际取得的证据和时间范围。
 
-## Temporary data
+## 临时数据
 
-Create media only under one run-scoped directory inside a dedicated temporary root, for example `<temp-root>/run-2026-08-10-abc123/`. Delete source video after audio/frame extraction, delete frames after OCR or vision processing, and delete all intermediates after verification.
+媒体只创建在专用临时根目录下的单次运行目录中，例如 `<temp-root>/run-2026-08-10-abc123/`。提取音频和关键帧后删除源视频；完成 OCR 或视觉识别后删除关键帧；核对完成后删除全部中间文件。
 
-A multi-day TTL is guaranteed only when a scheduled cleaner exists. Otherwise sweep expired run directories at the next invocation. Use `cleanup-run.mjs <run-directory> <temporary-root>` rather than a broad deletion command.
+只有存在定时清理器时，才能保证按多日 TTL 自动删除；否则在下次运行时清扫过期目录。使用 `cleanup-run.mjs <run-directory> <temporary-root>`，不要使用宽范围删除命令。
