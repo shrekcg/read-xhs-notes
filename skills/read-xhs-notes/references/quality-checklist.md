@@ -1,18 +1,19 @@
-# Quality checklist
+# 质量核对清单
 
-Before returning a result, verify:
+返回结果前确认：
 
-- The user-authorized scope is correct; favorites or likes were not inferred from a public profile or note link.
-- The active entry point is correct: `tab=fav` for 收藏 or `tab=liked` for 喜欢, with the `笔记` sub-view selected.
-- The correct cards were selected by card-container visual order and deduplicated by note ID; title-link positions and DOM array order were not used for sorting.
-- Title and author match the opened note.
-- Body paragraphs and named sections are represented in source order.
-- Every source number, tool name, list item, step, condition, and exception survives reconstruction.
-- Image indexes and video timestamps are correct when used.
-- OCR, subtitle, ASR, and key-frame uncertainty are labeled instead of guessed.
-- Comments, likes, and unrelated metadata are not mixed into content unless requested.
-- The summary contains no unsupported claims or inflated certainty.
-- Strong-information items preserve literal names and source markers; they are not presented as recommendations unless the source supports that claim.
-- Saved note URLs contain no session, share, or authorization query parameters.
-- Raw page body, image OCR, and video transcript are labeled as different evidence types.
-- Run-scoped media and intermediates are cleaned according to the requested policy.
+- 用户授权范围正确；没有把公开主页或笔记链接误当成对收藏/喜欢的授权。
+- 收藏使用 `tab=fav`、喜欢使用 `tab=liked`，且选中“笔记”子视图。
+- 卡片按卡片容器的视觉位置排序并按笔记 ID 去重；没有使用标题链接位置或 DOM 顺序。
+- 标题与作者和打开的笔记一致。
+- 正文段落、命名小节和媒体顺序已按来源保留。
+- 名称、数字、步骤、条件、例外和作者结论没有在整理中丢失。
+- 图片序号、视频时间点正确；OCR、字幕、ASR 和关键帧观察均有证据类型标记。
+- 已先判断读取状态：出现登录/扫码/验证码界面且笔记主体为空时，标记为 `登录失效`；没有把标题、推荐卡片、话题标签或页面外围文字误当成笔记内容。
+- 整理深度符合请求：轻度不越过原文做归纳，中度/高度能覆盖该篇笔记领域中真正影响理解的关键细节。
+- 没有把工具、链接、提示词、地点、价格或其他领域信息强行输出为固定栏目；只有来源相关时才融入内容。
+- 对不可读、存疑、冲突或覆盖不完整的内容给出可定位的“识别说明”，而非猜测；`覆盖度`仅在主体已读取时使用“完整/部分”，否则标为“不适用”。
+- 除非用户要求，没有混入评论、点赞或无关元数据。
+- 保存的笔记链接不含会话、分享或授权查询参数。
+- 原始正文、图片 OCR 与视频文字稿分别标注。
+- 运行范围内的媒体和中间文件依请求策略清理。

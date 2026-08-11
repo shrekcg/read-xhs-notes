@@ -1,0 +1,11 @@
+{
+  "name": "read-xhs-notes",
+  "private": true,
+  "description": "Validation harness for the read-xhs-notes Agent Skill",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

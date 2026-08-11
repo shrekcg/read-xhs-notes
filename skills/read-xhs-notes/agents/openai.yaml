@@ -1,4 +1,4 @@
 interface:
-  display_name: "Xiaohongshu Note Reader"
-  short_description: "Quickly read, batch-capture, and archive Xiaohongshu notes"
-  default_prompt: "Use $read-xhs-notes to batch-read my latest Xiaohongshu favorites and extract source-linked tools, skills, workflows, prompts, and useful content."
+  display_name: "小红书笔记快速阅读"
+  short_description: "快速读取与批量阅读小红书笔记，保真还原内容并按需沉淀"
+  default_prompt: "使用 $read-xhs-notes 批量阅读我收藏的最新 5 篇笔记，整理=中度，保留内容还原和识别说明，不保存。"

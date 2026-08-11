@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="430" viewBox="0 0 1200 430" role="img" aria-labelledby="title desc">
-  <title id="title">The read-xhs-notes workflow</title>
-  <desc id="desc">Four stages: an authorized visible session, source inventory, evidence package, and faithful reading output with uncertainty labels.</desc>
+  <title id="title">read-xhs-notes 阅读流程</title>
+  <desc id="desc">四个阶段：已授权可见会话、内容盘点、内容识别，以及按阅读深度整理并标记不确定内容。</desc>
   <rect width="1200" height="430" rx="26" fill="#F4F5EF"/>
   <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif">
-    <text x="56" y="64" fill="#101415" font-size="34" font-weight="800">A fast reader for notes that are hard to revisit</text>
-    <text x="56" y="94" fill="#5C6967" font-size="18">Source-grounded content, reusable tools and links, plus an optional archive record.</text>
+    <text x="56" y="64" fill="#101415" font-size="34" font-weight="800">让难以回看的小红书笔记快速变成可读记录</text>
+    <text x="56" y="94" fill="#5C6967" font-size="18">从已授权页面读取正文、图片与视频；无法确认的内容会单独标记。</text>
   </g>
   <path d="M276 235H300M532 235H556M788 235H812" stroke="#AAB8B2" stroke-width="3" stroke-linecap="round"/>
   <path d="M295 229L306 235L295 241M551 229L562 235L551 241M807 229L818 235L807 241" fill="none" stroke="#AAB8B2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -12,35 +12,35 @@
     <g transform="translate(56 148)">
       <rect width="220" height="176" rx="18" fill="#101415"/>
       <text x="20" y="38" fill="#EE6C4D" font-size="14" font-weight="800">01</text>
-      <text x="20" y="74" fill="#F4F5EF" font-size="21" font-weight="800">Visible session</text>
-      <text x="20" y="105" fill="#C2D0CB" font-size="15">User logs in</text>
-      <text x="20" y="128" fill="#C2D0CB" font-size="15">and authorizes</text>
-      <text x="20" y="151" fill="#C2D0CB" font-size="15">the target scope.</text>
+      <text x="20" y="74" fill="#F4F5EF" font-size="21" font-weight="800">已授权会话</text>
+      <text x="20" y="105" fill="#C2D0CB" font-size="15">用户自行登录</text>
+      <text x="20" y="128" fill="#C2D0CB" font-size="15">并明确授权</text>
+      <text x="20" y="151" fill="#C2D0CB" font-size="15">目标页面范围。</text>
     </g>
     <g transform="translate(312 148)">
       <rect width="220" height="176" rx="18" fill="#E4EBE5" stroke="#C9D3CD"/>
       <text x="20" y="38" fill="#EE6C4D" font-size="14" font-weight="800">02</text>
-      <text x="20" y="74" fill="#101415" font-size="22" font-weight="800">Inventory</text>
-      <text x="20" y="105" fill="#45504E" font-size="15">Body, images,</text>
-      <text x="20" y="128" fill="#45504E" font-size="15">video and their</text>
-      <text x="20" y="151" fill="#45504E" font-size="15">rendered order.</text>
+      <text x="20" y="74" fill="#101415" font-size="22" font-weight="800">内容盘点</text>
+      <text x="20" y="105" fill="#45504E" font-size="15">正文、图片、视频</text>
+      <text x="20" y="128" fill="#45504E" font-size="15">以及它们的</text>
+      <text x="20" y="151" fill="#45504E" font-size="15">实际展示顺序。</text>
     </g>
     <g transform="translate(568 148)">
       <rect width="220" height="176" rx="18" fill="#E4EBE5" stroke="#C9D3CD"/>
       <text x="20" y="38" fill="#EE6C4D" font-size="14" font-weight="800">03</text>
-      <text x="20" y="74" fill="#101415" font-size="22" font-weight="800">Evidence</text>
-      <text x="20" y="105" fill="#45504E" font-size="15">OCR, subtitles,</text>
-      <text x="20" y="128" fill="#45504E" font-size="15">ASR and frames</text>
-      <text x="20" y="151" fill="#45504E" font-size="15">stay separated.</text>
+      <text x="20" y="74" fill="#101415" font-size="22" font-weight="800">内容识别</text>
+      <text x="20" y="105" fill="#45504E" font-size="15">正文、图片文字、</text>
+      <text x="20" y="128" fill="#45504E" font-size="15">字幕与关键画面</text>
+      <text x="20" y="151" fill="#45504E" font-size="15">分开保留。</text>
     </g>
     <g transform="translate(824 148)">
       <rect width="320" height="176" rx="18" fill="#97C1B7"/>
       <text x="20" y="38" fill="#101415" font-size="14" font-weight="800">04</text>
-      <text x="20" y="74" fill="#101415" font-size="22" font-weight="800">Reading record</text>
-      <text x="20" y="105" fill="#20312E" font-size="15">Content, tools, links,</text>
-      <text x="20" y="128" fill="#20312E" font-size="15">and an optional</text>
-      <text x="20" y="151" fill="#20312E" font-size="15">archive-ready record.</text>
+      <text x="20" y="74" fill="#101415" font-size="22" font-weight="800">阅读记录</text>
+      <text x="20" y="105" fill="#20312E" font-size="15">按轻度、中度或高度整理，</text>
+      <text x="20" y="128" fill="#20312E" font-size="15">保留内容还原与原链接，</text>
+      <text x="20" y="151" fill="#20312E" font-size="15">需要时可选择沉淀。</text>
     </g>
   </g>
-  <text x="56" y="377" fill="#5C6967" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">No cookie export · No credential storage · No anti-bot bypass</text>
+  <text x="56" y="377" fill="#5C6967" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">仅限已授权会话 · 不导出凭据 · 不绕过限制</text>
 </svg>
