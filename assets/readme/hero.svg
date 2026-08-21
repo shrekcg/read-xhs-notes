@@ -1,45 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380" role="img" aria-labelledby="title desc">
-  <title id="title">read-xhs-notes：小红书笔记快速阅读</title>
-  <desc id="desc">从已授权浏览器会话读取正文、图片和视频内容，并按阅读深度生成可核对记录。</desc>
-  <rect width="1200" height="380" rx="28" fill="#101415"/>
-  <path d="M0 295H1200" stroke="#263033" stroke-width="1"/>
-  <path d="M56 64H638" stroke="#EE6C4D" stroke-width="3"/>
-  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif">
-    <text x="56" y="112" fill="#9FB0AD" font-size="18" font-weight="700" letter-spacing="2">AI 技能 · 小红书快速阅读</text>
-    <text x="56" y="178" fill="#F4F5EF" font-size="54" font-weight="800">read-xhs-notes</text>
-    <text x="56" y="221" fill="#D0D8D3" font-size="26" font-weight="600">快速读取小红书笔记 · 批量阅读与沉淀</text>
-    <text x="56" y="259" fill="#9FB0AD" font-size="18">快速读懂内容，保留来源依据；需要时再沉淀。</text>
-    <text x="56" y="334" fill="#EE6C4D" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">仅限已授权会话 · 不导出凭据 · 不绕过限制</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-labelledby="title desc">
+  <title id="title">read-xhs-notes：快速读取小红书笔记，匿名优先</title>
+  <desc id="desc">把公开小红书链接解析成正文、图片文字、视频证据和可回看的阅读记录。</desc>
+  <rect width="1200" height="400" rx="28" fill="#0B1220"/>
+  <path d="M54 326H1146" stroke="#24344A" stroke-width="1"/>
+  <path d="M54 70H610" stroke="#6EE7D2" stroke-width="3"/>
+  <g font-family="Arial, sans-serif">
+    <text x="54" y="112" fill="#9DB0C8" font-size="17" font-weight="700" letter-spacing="2">小红书笔记阅读工具 · ANONYMOUS FIRST</text>
+    <text x="54" y="180" fill="#F6F8FB" font-size="52" font-weight="800">read-xhs-notes</text>
+    <text x="54" y="224" fill="#D9E4F0" font-size="25" font-weight="600">把一条链接，变成可核对的阅读记录</text>
+    <text x="54" y="263" fill="#9DB0C8" font-size="18">正文、图片文字、视频证据；轻度整理，不替原文添内容。</text>
+    <text x="54" y="365" fill="#6EE7D2" font-size="15" font-family="Courier, monospace">credentials: omit   ·   public link   ·   source-grounded</text>
   </g>
-  <g transform="translate(710 46)">
-    <rect width="434" height="244" rx="22" fill="#182022" stroke="#384649"/>
-    <rect x="26" y="25" width="206" height="22" rx="11" fill="#263336"/>
-    <circle cx="42" cy="36" r="5" fill="#EE6C4D"/>
-    <text x="59" y="42" fill="#CAD4CF" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">已授权浏览器标签页</text>
-    <g transform="translate(26 71)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif">
-      <rect width="114" height="134" rx="12" fill="#F4F5EF"/>
-      <rect x="12" y="13" width="90" height="56" rx="7" fill="#97C1B7"/>
-      <path d="M12 55 C35 31, 58 76, 102 24" fill="none" stroke="#101415" stroke-width="5"/>
-      <rect x="12" y="81" width="75" height="8" rx="4" fill="#263336"/>
-      <rect x="12" y="98" width="56" height="7" rx="3.5" fill="#85938F"/>
-      <text x="12" y="123" fill="#EE6C4D" font-size="11" font-weight="700">[图 03]</text>
-      <rect x="132" y="0" width="250" height="38" rx="10" fill="#223032"/>
-      <text x="148" y="24" fill="#F4F5EF" font-size="14" font-weight="700">[正文] 笔记正文</text>
-      <rect x="132" y="50" width="224" height="11" rx="5.5" fill="#71807D"/>
-      <rect x="132" y="71" width="194" height="11" rx="5.5" fill="#53615F"/>
-      <rect x="132" y="92" width="238" height="11" rx="5.5" fill="#53615F"/>
-      <rect x="132" y="121" width="238" height="39" rx="10" fill="#2B393B"/>
-      <text x="148" y="146" fill="#EE6C4D" font-size="13" font-weight="700">[视频 01:24]</text>
-      <rect x="132" y="154" width="211" height="9" rx="4.5" fill="#97C1B7"/>
-      <rect x="132" y="170" width="166" height="9" rx="4.5" fill="#71807D"/>
+  <g transform="translate(692 48)">
+    <rect width="454" height="250" rx="22" fill="#121E30" stroke="#2D4764"/>
+    <g transform="translate(24 24)" font-family="Courier, monospace">
+      <rect width="406" height="34" rx="9" fill="#1D3047"/>
+      <circle cx="18" cy="17" r="5" fill="#6EE7D2"/>
+      <text x="34" y="22" fill="#D9E4F0" font-size="13">xhslink.cn/o/…</text>
+      <text x="0" y="72" fill="#6EE7D2" font-size="13">01  FETCH  PUBLIC PAGE</text>
+      <text x="0" y="99" fill="#9DB0C8" font-size="13">credentials: omit</text>
+      <text x="0" y="126" fill="#9DB0C8" font-size="13">cookie:         [not read]</text>
+      <text x="0" y="153" fill="#6EE7D2" font-size="13">02  EXTRACT  NOTE STATE</text>
+      <rect x="0" y="170" width="406" height="54" rx="10" fill="#182A40"/>
+      <text x="16" y="193" fill="#F6F8FB" font-size="14">[正文]   [图 01–09]   [视频]</text>
+      <text x="16" y="214" fill="#FFBE7A" font-size="12">evidence stays separate from summary</text>
     </g>
   </g>
-  <g transform="translate(710 316)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14">
-    <circle cx="8" cy="-5" r="5" fill="#EE6C4D"/>
-    <text x="22" y="0" fill="#D0D8D3">正文</text>
-    <circle cx="102" cy="-5" r="5" fill="#97C1B7"/>
-    <text x="116" y="0" fill="#D0D8D3">图片文字</text>
-    <circle cx="256" cy="-5" r="5" fill="#71807D"/>
-    <text x="270" y="0" fill="#D0D8D3">视频信息</text>
+  <g transform="translate(700 335)" font-family="Courier, monospace" font-size="14">
+    <rect width="102" height="30" rx="15" fill="#173C3A"/>
+    <text x="18" y="20" fill="#6EE7D2">正文</text>
+    <rect x="114" width="122" height="30" rx="15" fill="#3B2E20"/>
+    <text x="132" y="20" fill="#FFBE7A">图片 OCR</text>
+    <rect x="248" width="122" height="30" rx="15" fill="#25334A"/>
+    <text x="266" y="20" fill="#B5C8E0">视频证据</text>
   </g>
 </svg>
