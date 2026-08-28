@@ -6,6 +6,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { resolveAnonymousNote } from "../skills/read-xhs-notes/scripts/anonymous-note-resolver.mjs";
 
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
 
@@ -48,6 +49,88 @@ test("sanitize-note-url rejects non-Xiaohongshu URLs", () => {
 
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /not a Xiaohongshu link/);
+});
+
+test("anonymous resolver extracts a public note without credentials", async () => {
+  const noteId = "64cb12340000000001020304";
+  const sourceUrl = `https://xhslink.cn/o/share-${noteId}`;
+  const requestedUrls = [];
+  let requestInit;
+  const state = {
+    note: {
+      noteDetailMap: {
+        [noteId]: {
+          note: {
+            noteId,
+            title: "匿名解析标题",
+            desc: "匿名解析正文",
+            imageList: [
+              { urlDefault: "https://sns-webpic-qc.xhscdn.com/first.webp" },
+            ],
+            user: { nickname: "作者" },
+            tagList: [{ name: "设计" }],
+            type: "normal",
+          },
+        },
+      },
+    },
+  };
+  const html = `<html><script>window.__INITIAL_STATE__=${JSON.stringify(state).replace(
+    '{"note":',
+    '{"optional":undefined,"note":',
+  )}</script></html>`;
+  const note = await resolveAnonymousNote(sourceUrl, {
+    fetchImpl: async (url, init) => {
+      requestedUrls.push(url.toString());
+      requestInit = init;
+      if (requestedUrls.length === 1) {
+        return new Response("", {
+          status: 302,
+          headers: { location: `https://www.xiaohongshu.com/explore/${noteId}` },
+        });
+      }
+      return new Response(html, {
+        status: 200,
+        headers: { "content-type": "text/html" },
+      });
+    },
+  });
+
+  assert.deepEqual(requestedUrls, [
+    "https://xhslink.cn/o/share-64cb12340000000001020304",
+    `https://www.xiaohongshu.com/explore/${noteId}`,
+  ]);
+  assert.equal(requestInit.credentials, "omit");
+  assert.equal(
+    Object.keys(requestInit.headers).some((name) => name.toLowerCase() === "cookie"),
+    false,
+  );
+  assert.equal(note.title, "匿名解析标题");
+  assert.equal(note.body, "匿名解析正文");
+  assert.deepEqual(note.imageUrls, ["https://sns-webpic-qc.xhscdn.com/first.webp"]);
+  assert.equal(note.sourceUrl, `https://www.xiaohongshu.com/explore/${noteId}`);
+});
+
+test("anonymous resolver follows only Xiaohongshu redirects", async () => {
+  const sourceUrl = "https://xhslink.cn/o/example";
+  await assert.rejects(
+    resolveAnonymousNote(sourceUrl, {
+      fetchImpl: async () => new Response("", {
+        status: 302,
+        headers: { location: "https://example.com/collect-account" },
+      }),
+    }),
+    /非小红书域名/,
+  );
+});
+
+test("anonymous resolver fails closed instead of using a logged-in browser", async () => {
+  await assert.rejects(
+    resolveAnonymousNote("https://www.xiaohongshu.com/explore/64cb12340000000001020304", {
+      fetchImpl: async () => new Response("<html><h1>请登录后查看</h1></html>", { status: 200 }),
+    }),
+    /不会切换到你的登录浏览器/,
+  );
 });
 
 test("order-cards sorts a visual row left-to-right and rows top-to-bottom", () => {

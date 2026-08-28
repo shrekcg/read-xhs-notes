@@ -1,4 +1,4 @@
 interface:
   display_name: "小红书笔记快速阅读"
-  short_description: "快速读取与批量阅读小红书笔记，保真还原内容并按需沉淀"
-  default_prompt: "使用 $read-xhs-notes 批量阅读我收藏的最新 5 篇笔记，整理=中度，保留内容还原和识别说明，不保存。"
+  short_description: "匿名读取与批量整理小红书笔记，保留原文证据并支持图片视频"
+  default_prompt: "使用 $read-xhs-notes 阅读这条小红书链接，优先匿名解析，整理=中度，保留内容还原和识别说明。"
